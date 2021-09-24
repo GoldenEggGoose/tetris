@@ -1,5 +1,39 @@
-#grid{
-    width: 200px;
-    height: 400px;
-    background-color: black;
+:root {
+  --green: rgb(88, 233, 87);
+  --yellow: rgb(244, 252, 83);
+  --orange: rgb(244, 194, 89);
+  --blue: rgb(93, 97, 233);
+  --cyan: rgb(81, 239, 234);
+  --red: rgb(243, 99, 86);
+  --purple: rgb(189, 99, 237);
+  --darkBlue: rgb(0, 25, 50);
+  --borders: rgb(14, 56, 99);
+}
+#grid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 200px;
+  height: 400px;
+  background-color: var(--darkBlue);
+}
+#grid div {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--borders);
+}
+.jBlock{
+    background-color: var(--purple);
+}
+.sBlock{
+    background-color: var(--red);
+}
+.tBlock{
+    background-color: var(--blue);
+}
+.oBlock{
+    background-color: var(--green);
+}
+.iBlock{
+    background-color: var(--yellow);
 }
