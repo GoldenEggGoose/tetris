@@ -16,11 +16,20 @@
   height: 400px;
   background-color: var(--darkBlue);
 }
+
 #grid div {
   box-sizing: border-box;
   width: 20px;
   height: 20px;
   border: 1px solid var(--borders);
+}
+#grid #ground{
+  display: flex;
+  flex-wrap: wrap;
+  width: 200px;
+}
+#grid #ground div{
+  border: 0px;
 }
 .jBlock{
     background-color: var(--purple);

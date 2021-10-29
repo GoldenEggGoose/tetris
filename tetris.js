@@ -3,8 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let squares = document.querySelectorAll("#grid div");
   const width = 10;
   const height = 20;
-  let timeInterval = 500;
-  console.log(Array.from(squares));
+  let timeInterval = 250;
   class Block {
     constructor(variations, className) {
       this.variations = variations;
@@ -51,9 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const getRandomBlock = () => {
     return blocks[Math.floor(Math.random() * (blocks.length - 1))];
   };
+  const getRandomRotation = () => Math.floor(Math.random() * 3);
   let currentIndex = 4;
-  let currentRotation = 3;
+  let currentRotation = getRandomRotation();
   let currentBlock = getRandomBlock();
+  let currentBlockIndexes = currentBlock.variations[currentRotation];
   const drawBlock = () => {
     currentBlock.variations[currentRotation].forEach((index) => {
       squares[currentIndex + index].classList.add(currentBlock.className);
@@ -64,9 +65,110 @@ document.addEventListener("DOMContentLoaded", () => {
       squares[currentIndex + index].classList.remove(currentBlock.className);
     });
   };
-  setInterval(() => {
-    eraseBlock()
-    currentIndex = width + currentIndex;
+  const spawnNewBlock = () => {
+    currentBlock = getRandomBlock();
+    currentIndex = 4;
+    currentRotation = getRandomRotation();
+    currentBlockIndexes = currentBlock.variations[currentRotation];
     drawBlock();
+  };
+  const moveRight = () => {
+    let thereIsASquareAgainstTheRightWall = currentBlockIndexes.some(
+      (index) => (index + currentIndex) % width === width - 1
+    );
+    // let thereIsAnOccupiedBlock = currentBlockIndexes.some((index) => squares[index+currentIndex-1].classList.contains("occupied"))
+    if (!thereIsASquareAgainstTheRightWall) {
+      eraseBlock();
+      currentIndex++;
+      if (
+        currentBlockIndexes.some((index) =>
+          squares[index + currentIndex].classList.contains("occupied")
+        )
+      ) {
+        currentIndex--;
+      }
+      drawBlock();
+    }
+  };
+  const moveLeft = () => {
+    let thereIsASquareAgainstTheLeftWall = currentBlockIndexes.some(
+      (index) => (index + currentIndex) % width === 0
+    );
+    // let thereIsAnOccupiedBlock = currentBlockIndexes.some((index) => squares[index+currentIndex-1].classList.contains("occupied"))
+    if (!thereIsASquareAgainstTheLeftWall) {
+      eraseBlock();
+      currentIndex--;
+      if (
+        currentBlockIndexes.some((index) =>
+          squares[index + currentIndex].classList.contains("occupied")
+        )
+      ) {
+        currentIndex++;
+      }
+      drawBlock();
+    }
+  };
+  const rotate = () => {
+    eraseBlock();
+    currentRotation++
+    currentRotation=currentRotation%4
+    currentBlockIndexes = currentBlock.variations[currentRotation];
+    let squareIsAtLeftEdge = currentBlockIndexes.some((index) => (index + currentIndex) % width === 0)
+    let squareIsAtRightEdge = currentBlockIndexes.some((index) => (index + currentIndex) % width === width - 1);
+    let someSquareIsOccupied = currentBlockIndexes.some((index) =>squares[index + currentIndex].classList.contains("occupied"))
+    if ((squareIsAtLeftEdge&&squareIsAtRightEdge)||someSquareIsOccupied){
+      currentRotation--;
+      if(currentRotation<0){
+        currentRotation+=4
+      }
+      currentBlockIndexes = currentBlock.variations[currentRotation];
+    }
+    drawBlock();
+  };
+  const moveDown = () => {
+    eraseBlock();
+    currentIndex += width;
+    drawBlock();
+    checkAndHandleCollisions();
+  };
+  document.addEventListener("keydown", (event) => {
+    switch (event.code) {
+      case "KeyD":
+      case "ArrowRight":
+        moveRight();
+        break;
+      case "KeyA":
+      case "ArrowLeft":
+        moveLeft();
+        break;
+      case "KeyS":
+      case "ArrowDown":
+        moveDown();
+        break;
+      case "KeyW":
+      case "ArrowUp":
+        rotate();
+      default:
+        break;
+    }
+  });
+  // console.log(squares.some(square => square.classList.contains()))
+  const checkAndHandleCollisions = () => {
+    //decide whether i need to freeze the block
+    //check whether any square in current block is above an occupied square
+    let thereIsACollision = currentBlockIndexes.some((index) =>
+      squares[index + currentIndex + width].classList.contains("occupied")
+    );
+    //make all of the squares in the current block occupied
+    if (thereIsACollision) {
+      currentBlockIndexes.forEach((index) => {
+        squares[index + currentIndex].classList.add("occupied");
+      });
+      spawnNewBlock();
+    }
+    //if it does freeze, spawn a new block
+  };
+  setInterval(() => {
+    moveDown();
   }, timeInterval);
 });
