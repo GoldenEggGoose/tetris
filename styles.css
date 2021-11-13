@@ -1,3 +1,6 @@
+html{
+  background-color: #303030
+}
 :root {
   --green: rgb(88, 233, 87);
   --yellow: rgb(244, 252, 83);
@@ -9,6 +12,17 @@
   --darkBlue: rgb(0, 25, 50);
   --borders: rgb(14, 56, 99);
 }
+body{
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#gridContainer{
+  display: flex;
+  align-items: flex-start;
+}
 #grid {
   display: flex;
   flex-wrap: wrap;
@@ -18,6 +32,19 @@
 }
 
 #grid div {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--borders);
+}
+#miniGrid{
+  background-color: var(--darkBlue);
+  margin: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 80px;
+}
+#miniGrid div{
   box-sizing: border-box;
   width: 20px;
   height: 20px;
