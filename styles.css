@@ -1,5 +1,5 @@
-html{
-  background-color: #303030
+html {
+  background-color: #303030;
 }
 :root {
   --green: rgb(88, 233, 87);
@@ -12,14 +12,14 @@ html{
   --darkBlue: rgb(0, 25, 50);
   --borders: rgb(14, 56, 99);
 }
-body{
+body {
   margin: 0;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-#gridContainer{
+#gridContainer {
   display: flex;
   align-items: flex-start;
 }
@@ -37,39 +37,57 @@ body{
   height: 20px;
   border: 1px solid var(--borders);
 }
-#miniGrid{
+#miniGrid {
   background-color: var(--darkBlue);
   margin: 40px;
   display: flex;
   flex-wrap: wrap;
   width: 80px;
 }
-#miniGrid div{
+#miniGrid div {
   box-sizing: border-box;
   width: 20px;
   height: 20px;
   border: 1px solid var(--borders);
 }
-#grid #ground{
+#grid #ground {
   display: flex;
   flex-wrap: wrap;
   width: 200px;
 }
-#grid #ground div{
+#grid #ground div {
   border: 0px;
 }
-.jBlock{
-    background-color: var(--purple);
+.jBlock {
+  background-color: var(--purple);
 }
-.sBlock{
-    background-color: var(--red);
+.sBlock {
+  background-color: var(--red);
 }
-.tBlock{
-    background-color: var(--blue);
+.tBlock {
+  background-color: var(--blue);
 }
-.oBlock{
-    background-color: var(--green);
+.oBlock {
+  background-color: var(--green);
 }
-.iBlock{
-    background-color: var(--yellow);
+.iBlock {
+  background-color: var(--yellow);
+}
+#start {
+  padding: 8px 16px 8px 16px;
+  background-color: var(--blue);
+  border: none;
+  border-radius: 4px;
+  color: whitesmoke;
+  font-weight: bold;
+  letter-spacing: 0px;
+  width: 100px;
+  text-transform: uppercase;
+}
+.items-center{
+  align-items: center;
+}
+.flex-column{
+  display: flex;
+  flex-direction: column;
 }

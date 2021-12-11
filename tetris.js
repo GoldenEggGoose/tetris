@@ -1,12 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
   let grid = document.querySelector("#grid");
   let miniGrid = document.querySelector("#miniGrid");
-  let squares = document.querySelectorAll("#grid div");
+  let allSquares = Array.from(document.querySelectorAll("#grid div"));
+  let gridSquares = document.querySelectorAll("#grid > div");
   let miniGridSquares = document.querySelectorAll("#miniGrid div");
+  let button = document.querySelector("#start");
+  button.addEventListener("click", onButtonClick);
   const miniGridWidth = 4;
   const width = 10;
   const height = 20;
   let timeInterval = 250;
+  let isRunning = false;
   class Block {
     constructor(variations, className) {
       this.variations = variations;
@@ -75,6 +79,22 @@ document.addEventListener("DOMContentLoaded", () => {
     [1, miniGridWidth + 1, miniGridWidth * 2 + 1, miniGridWidth * 3 + 1],
     "iBlock"
   );
+  let interval;
+  function onButtonClick() {
+    updateMiniGrid();
+    if (interval === undefined) {
+      interval = setInterval(() => {
+        moveDown();
+      }, timeInterval);
+      updateButtonText("Pause");
+      isRunning = true;
+    } else {
+      clearInterval(interval);
+      interval = undefined;
+      updateButtonText("Resume");
+      isRunning = false;
+    }
+  }
 
   let blocks = [jBlock, sBlock, tBlock, oBlock, iBlock];
   let miniGridBlocks = [
@@ -91,23 +111,25 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentIndex = 4;
   let currentRotation = getRandomRotation();
   let nextBlock = getRandomBlock();
-  let nextBlockIndexes = nextBlock.variations[0];
   let currentBlock = getRandomBlock();
   let currentBlockIndexes = currentBlock.variations[currentRotation];
   const drawBlock = () => {
     currentBlock.variations[currentRotation].forEach((index) => {
-      squares[currentIndex + index].classList.add(currentBlock.className);
+      allSquares[currentIndex + index].classList.add(currentBlock.className);
     });
   };
   const eraseBlock = () => {
     currentBlock.variations[currentRotation].forEach((index) => {
-      squares[currentIndex + index].classList.remove(currentBlock.className);
+      allSquares[currentIndex + index].classList.remove(currentBlock.className);
     });
   };
   const eraseBlockFromTheMiniGrid = () => {
-    miniGridSquares.forEach(square => {
+    miniGridSquares.forEach((square) => {
       square.classList.remove(currentBlock.className);
     });
+  };
+  const updateButtonText = (buttonText) => {
+    button.textContent = buttonText;
   };
   const spawnNewBlock = () => {
     currentBlock = nextBlock;
@@ -117,20 +139,23 @@ document.addEventListener("DOMContentLoaded", () => {
     currentBlockIndexes = currentBlock.variations[currentRotation];
     drawBlock();
   };
-  const getNextBlock = () =>{
-    return miniGridBlocks.find(block => block.className === nextBlock.className)
-  }
+  const getNextBlock = () => {
+    return miniGridBlocks.find(
+      (block) => block.className === nextBlock.className
+    );
+  };
   const moveRight = () => {
     let thereIsASquareAgainstTheRightWall = currentBlockIndexes.some(
       (index) => (index + currentIndex) % width === width - 1
     );
-    // let thereIsAnOccupiedBlock = currentBlockIndexes.some((index) => squares[index+currentIndex-1].classList.contains("occupied"))
     if (!thereIsASquareAgainstTheRightWall) {
       eraseBlock();
       currentIndex++;
       if (
-        currentBlockIndexes.some((index) =>
-          squares[index + currentIndex].classList.contains("occupied")
+        currentBlockIndexes.some(
+          (index) =>
+            allSquares[index + currentIndex].classList.contains("occupied") ||
+            allSquares[index + width + currentIndex].classList.contains("occupied")
         )
       ) {
         currentIndex--;
@@ -147,8 +172,10 @@ document.addEventListener("DOMContentLoaded", () => {
       eraseBlock();
       currentIndex--;
       if (
-        currentBlockIndexes.some((index) =>
-          squares[index + currentIndex].classList.contains("occupied")
+        currentBlockIndexes.some(
+          (index) =>
+            allSquares[index + currentIndex].classList.contains("occupied") ||
+            allSquares[index + width + currentIndex].classList.contains("occupied")
         )
       ) {
         currentIndex++;
@@ -167,8 +194,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let squareIsAtRightEdge = currentBlockIndexes.some(
       (index) => (index + currentIndex) % width === width - 1
     );
-    let someSquareIsOccupied = currentBlockIndexes.some((index) =>
-      squares[index + currentIndex].classList.contains("occupied")
+    let someSquareIsOccupied = currentBlockIndexes.some(
+      (index) =>
+        allSquares[index + currentIndex].classList.contains("occupied") ||
+        allSquares[index + width + currentIndex].classList.contains("occupied")
     );
     if ((squareIsAtLeftEdge && squareIsAtRightEdge) || someSquareIsOccupied) {
       currentRotation--;
@@ -185,52 +214,73 @@ document.addEventListener("DOMContentLoaded", () => {
     drawBlock();
     checkAndHandleCollisions();
   };
-  let updateMiniGrid = ()=>{
-    eraseBlockFromTheMiniGrid()
+  let updateMiniGrid = () => {
+    eraseBlockFromTheMiniGrid();
     getNextBlock().variations.forEach((index) => {
       miniGridSquares[index].classList.add(nextBlock.className);
     });
-  }
+  };
   document.addEventListener("keydown", (event) => {
-    switch (event.code) {
-      case "KeyD":
-      case "ArrowRight":
-        moveRight();
-        break;
-      case "KeyA":
-      case "ArrowLeft":
-        moveLeft();
-        break;
-      case "KeyS":
-      case "ArrowDown":
-        moveDown();
-        break;
-      case "KeyW":
-      case "ArrowUp":
-        rotate();
-      default:
-        break;
+    if (isRunning) {
+      switch (event.code) {
+        case "KeyD":
+        case "ArrowRight":
+          moveRight();
+          break;
+        case "KeyA":
+        case "ArrowLeft":
+          moveLeft();
+          break;
+        case "KeyS":
+        case "ArrowDown":
+          moveDown();
+          break;
+        case "KeyW":
+        case "ArrowUp":
+          rotate();
+        default:
+          break;
+      }
     }
   });
-  // console.log(squares.some(square => square.classList.contains()))
+  const checkAndHandleLineMatch = () => {
+    for (let i = 0; i < gridSquares.length; i += width) {
+      let rowIndexes = [
+        i,
+        i + 1,
+        i + 2,
+        i + 3,
+        i + 4,
+        i + 5,
+        i + 6,
+        i + 7,
+        i + 8,
+        i + 9,
+      ];
+      let lineMatchFound = rowIndexes.every((index) => gridSquares[index].classList.contains("occupied"))
+      if(lineMatchFound){
+        rowIndexes.forEach(index => {
+          gridSquares[index].classList.remove("occupied", "sBlock", "oBlock", "jBlock", "tBlock", "iBlock")
+        });
+        let emptyRow = allSquares.splice(i, width)
+        allSquares = emptyRow.concat(allSquares)
+        allSquares.forEach(square => {
+          grid.appendChild(square)
+        });
+      }
+    }
+  };
   const checkAndHandleCollisions = () => {
-    //decide whether i need to freeze the block
-    //check whether any square in current block is above an occupied square
     let thereIsACollision = currentBlockIndexes.some((index) =>
-      squares[index + currentIndex + width].classList.contains("occupied")
+      allSquares[index + currentIndex + width].classList.contains("occupied")
     );
-    //make all of the squares in the current block occupied
     if (thereIsACollision) {
       currentBlockIndexes.forEach((index) => {
-        squares[index + currentIndex].classList.add("occupied");
+        allSquares[index + currentIndex].classList.add("occupied");
       });
+      checkAndHandleLineMatch()
       spawnNewBlock();
-      updateMiniGrid()
+      updateMiniGrid();
     }
-    //if it does freeze, spawn a new block
   };
-  updateMiniGrid()
-  setInterval(() => {
-    moveDown();
-  }, timeInterval);
 });
