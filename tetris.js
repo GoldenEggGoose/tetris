@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let grid = document.querySelector("#grid");
   let miniGrid = document.querySelector("#miniGrid");
   let allSquares = Array.from(document.querySelectorAll("#grid div"));
-  let gridSquares = document.querySelectorAll("#grid > div");
   let miniGridSquares = document.querySelectorAll("#miniGrid div");
   let button = document.querySelector("#start");
   button.addEventListener("click", onButtonClick);
@@ -244,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   const checkAndHandleLineMatch = () => {
-    for (let i = 0; i < gridSquares.length; i += width) {
+    for (let i = 0; i < allSquares.length; i += width) {
       let rowIndexes = [
         i,
         i + 1,
@@ -257,10 +256,10 @@ document.addEventListener("DOMContentLoaded", () => {
         i + 8,
         i + 9,
       ];
-      let lineMatchFound = rowIndexes.every((index) => gridSquares[index].classList.contains("occupied"))
+      let lineMatchFound = rowIndexes.every((index) => allSquares[index].classList.contains("occupied")&& !allSquares[index].classList.contains("ground"))
       if(lineMatchFound){
         rowIndexes.forEach(index => {
-          gridSquares[index].classList.remove("occupied", "sBlock", "oBlock", "jBlock", "tBlock", "iBlock")
+          allSquares[index].classList.remove("occupied", "sBlock", "oBlock", "jBlock", "tBlock", "iBlock")
         });
         let emptyRow = allSquares.splice(i, width)
         allSquares = emptyRow.concat(allSquares)
@@ -278,8 +277,8 @@ document.addEventListener("DOMContentLoaded", () => {
       currentBlockIndexes.forEach((index) => {
         allSquares[index + currentIndex].classList.add("occupied");
       });
-      checkAndHandleLineMatch()
       spawnNewBlock();
+      checkAndHandleLineMatch()
       updateMiniGrid();
     }
   };

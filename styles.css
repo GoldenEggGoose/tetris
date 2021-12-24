@@ -50,12 +50,7 @@ body {
   height: 20px;
   border: 1px solid var(--borders);
 }
-#grid #ground {
-  display: flex;
-  flex-wrap: wrap;
-  width: 200px;
-}
-#grid #ground div {
+#grid .ground{
   border: 0px;
 }
 .jBlock {
