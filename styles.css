@@ -86,3 +86,20 @@ body {
   display: flex;
   flex-direction: column;
 }
+.scoreText{
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: white;
+  font-family: sans-serif;
+  font-size: 13px;
+}
+.scoreContainer{
+  box-sizing: border-box;
+  padding: 4px;
+  background-color: var(--darkBlue);
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--borders);
+}

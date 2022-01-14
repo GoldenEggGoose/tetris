@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let miniGrid = document.querySelector("#miniGrid");
   let allSquares = Array.from(document.querySelectorAll("#grid div"));
   let miniGridSquares = document.querySelectorAll("#miniGrid div");
+  let scoreNumber = document.querySelector("#scoreNumber");
   let button = document.querySelector("#start");
   button.addEventListener("click", onButtonClick);
   const miniGridWidth = 4;
@@ -10,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const height = 20;
   let timeInterval = 250;
   let isRunning = false;
+  let score = 0;
   class Block {
     constructor(variations, className) {
       this.variations = variations;
@@ -154,7 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
         currentBlockIndexes.some(
           (index) =>
             allSquares[index + currentIndex].classList.contains("occupied") ||
-            allSquares[index + width + currentIndex].classList.contains("occupied")
+            allSquares[index + width + currentIndex].classList.contains(
+              "occupied"
+            )
         )
       ) {
         currentIndex--;
@@ -174,7 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
         currentBlockIndexes.some(
           (index) =>
             allSquares[index + currentIndex].classList.contains("occupied") ||
-            allSquares[index + width + currentIndex].classList.contains("occupied")
+            allSquares[index + width + currentIndex].classList.contains(
+              "occupied"
+            )
         )
       ) {
         currentIndex++;
@@ -256,16 +262,29 @@ document.addEventListener("DOMContentLoaded", () => {
         i + 8,
         i + 9,
       ];
-      let lineMatchFound = rowIndexes.every((index) => allSquares[index].classList.contains("occupied")&& !allSquares[index].classList.contains("ground"))
-      if(lineMatchFound){
-        rowIndexes.forEach(index => {
-          allSquares[index].classList.remove("occupied", "sBlock", "oBlock", "jBlock", "tBlock", "iBlock")
+      let lineMatchFound = rowIndexes.every(
+        (index) =>
+          allSquares[index].classList.contains("occupied") &&
+          !allSquares[index].classList.contains("ground")
+      );
+      if (lineMatchFound) {
+        rowIndexes.forEach((index) => {
+          allSquares[index].classList.remove(
+            "occupied",
+            "sBlock",
+            "oBlock",
+            "jBlock",
+            "tBlock",
+            "iBlock"
+          );
         });
-        let emptyRow = allSquares.splice(i, width)
-        allSquares = emptyRow.concat(allSquares)
-        allSquares.forEach(square => {
-          grid.appendChild(square)
+        let emptyRow = allSquares.splice(i, width);
+        allSquares = emptyRow.concat(allSquares);
+        allSquares.forEach((square) => {
+          grid.appendChild(square);
         });
+        score += 10;
+        scoreNumber.textContent = score;
       }
     }
   };
@@ -278,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
         allSquares[index + currentIndex].classList.add("occupied");
       });
       spawnNewBlock();
-      checkAndHandleLineMatch()
+      checkAndHandleLineMatch();
       updateMiniGrid();
     }
   };
