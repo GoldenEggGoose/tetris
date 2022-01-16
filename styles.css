@@ -28,6 +28,7 @@ body {
   flex-wrap: wrap;
   width: 200px;
   height: 400px;
+  position: relative;
   background-color: var(--darkBlue);
 }
 
@@ -102,4 +103,15 @@ body {
   display: flex;
   flex-direction: column;
   border: 2px solid var(--borders);
+}
+#gameOver{
+  font-size: 30px;
+  font-weight: bold;
+  color: rgb(255, 81, 81);
+  position: absolute;
+  margin: 0;
+  text-align: center;
+  padding: 0;
+  top: calc(200px - 34.4px / 2);
+  left: calc(100px - 149.11px / 2);
 }

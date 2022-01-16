@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   let grid = document.querySelector("#grid");
+  let gameOverText = document.querySelector("#gameOver");
   let miniGrid = document.querySelector("#miniGrid");
   let allSquares = Array.from(document.querySelectorAll("#grid div"));
   let miniGridSquares = document.querySelectorAll("#miniGrid div");
@@ -80,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
     [1, miniGridWidth + 1, miniGridWidth * 2 + 1, miniGridWidth * 3 + 1],
     "iBlock"
   );
-  let interval;
+  let interval
   function onButtonClick() {
     updateMiniGrid();
     if (interval === undefined) {
@@ -106,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     iBlockMiniGrid,
   ];
   const getRandomBlock = () => {
-    return blocks[Math.floor(Math.random() * (blocks.length - 1))];
+    return blocks[Math.floor(Math.random() * (blocks.length))];
   };
   const getRandomRotation = () => Math.floor(Math.random() * 3);
   let currentIndex = 4;
@@ -132,13 +133,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateButtonText = (buttonText) => {
     button.textContent = buttonText;
   };
+  let isGameOver = false
+  const gameOver = () =>{
+    gameOverText.textContent = "Game Over"
+    clearInterval(interval);
+    isRunning = false;
+    interval = undefined
+    isGameOver = true
+    updateButtonText("Restart")
+    button.addEventListener("click", () =>{
+      location.reload()
+    })
+  }
   const spawnNewBlock = () => {
     currentBlock = nextBlock;
     currentIndex = 4;
     nextBlock = getRandomBlock();
     currentRotation = getRandomRotation();
     currentBlockIndexes = currentBlock.variations[currentRotation];
-    drawBlock();
+    let spawnIsPossible = currentBlockIndexes.every((index) => {
+      return !allSquares[index+currentIndex].classList.contains("occupied")&&!allSquares[index+currentIndex+width].classList.contains("occupied")
+    });
+    if (spawnIsPossible) {
+      drawBlock();
+    } else {
+      gameOver();
+    }
   };
   const getNextBlock = () => {
     return miniGridBlocks.find(
